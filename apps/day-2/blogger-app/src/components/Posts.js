@@ -1,87 +1,57 @@
-import React from 'react';
+import React, { Component } from 'react';
 
-const posts = [
-  {
-    id: 1,
-    title: 'Overview of Redux',
-    body: 'Provides an introduction to Redux',
-    author: 'Hari',
-    category: 'redux'
-  },
-  {
-    id: 2,
-    title: 'An introduction to React',
-    body: 'A blog post that provides an overview of React',
-    author: 'Ram',
-    category: 'react'
+import Categories from './Categories';
+import PostDetail from './PostDetail';
+
+import { posts, categoryAll } from '../data/store';
+
+class Posts extends Component {
+
+  constructor() {
+    super();
+
+    this.state = {
+      posts: posts,
+      selectedCategory: categoryAll
+    };
+
+    // this.handleCategorySelect = this.handleCategorySelect.bind(this);
   }
-];
 
-// const post = {
-//   id: 1,
-//   title: 'Overview of Redux',
-//   body: 'Provides an introduction to Redux',
-//   author: 'Hari',
-//   category: 'redux'
-// };
+  // handleCategorySelect(category) {
+  //   this.setState({ selectedCategory: category });
+  // }
 
-// const post2 = {
-//   id: 2,
-//   title: 'An introduction to React',
-//   body: 'A blog post that provides an overview of React',
-//   author: 'Ram',
-//   category: 'react'
-// };
+  handleCategorySelect = (category) => {
+    this.setState({ selectedCategory: category });
+  }
 
-// const renderPosts = () => {
-//   const elements = [];
+  render() {
+    console.log('render() invoked..');
 
-//   for (let i = 0; i < posts.length; i++) {
-//     elements.push(<div>
-//       <div>
-//         Title: {posts[i].title}
-//       </div>
-//       <div>
-//         Body: {posts[i].body}
-//       </div>
-//       <div>
-//         Author: {posts[i].author}
-//       </div>
-//       <div>
-//         Category: {posts[i].category}
-//       </div>
-//       <hr />
-//     </div>);
-//   }
+    const posts = this.state.posts;
+    const selectedCategory = this.state.selectedCategory;
 
-//   return elements;
-// }
+    const filteredPosts = selectedCategory.id === 'all'
+      ? posts
+      : posts.filter(p => p.category === selectedCategory.id);
 
-const renderPosts = () => {
-  const elements = posts.map(p => <div key={p.id}>
-    <hr />
-    <div>
-      Title: {p.title}
-    </div>
-    <div>
-      Body: {p.body}
-    </div>
-    <div>
-      Author: {p.author}
-    </div>
-    <div>
-      Category: {p.category}
-    </div>
-  </div>);
+    return <div className="row">
+      <div className="col-3">
+        <Categories onCategorySelect={this.handleCategorySelect} />
+      </div>
 
-  return elements;
+      <div className="col">
+        <h3>Posts</h3>
+        <div>Selected Category: {selectedCategory.name}</div>
+        {filteredPosts.length > 0
+          ? filteredPosts.map(p => <PostDetail key={p.id} post={p} />)
+          : <div className="alert alert-info">No posts for the selected category.</div>
+        }
+      </div>
+    </div>;
+  }
+
 }
-
-const Posts = () => {
-  return <div>
-    <h3>Posts</h3>
-    {renderPosts()}
-  </div>;
-};
 
 export default Posts;
