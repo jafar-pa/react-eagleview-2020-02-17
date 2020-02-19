@@ -41,7 +41,3 @@ export const categories = [
   }
 ];
 
-export const categoryAll = {
-  id: 'all',
-  name: 'All'
-};

@@ -19,9 +19,13 @@ class PostService {
   }
 
   delete(id) {
-    // code to delete post
+    const index = posts.findIndex(p => p.id === id);
+
+    if (index >= 0) {
+      posts.splice(index, 1);
+    }
   }
 }
 
-const serviceInstance = new PostService()
+const serviceInstance = new PostService();
 export default serviceInstance;

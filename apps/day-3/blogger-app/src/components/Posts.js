@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 import Categories from './Categories';
-import PostDetail from './PostDetail';
 
-import { posts, categoryAll } from '../data/store';
+import { categoryAll } from '../constants';
+import postService from '../services/PostService';
 
 class Posts extends Component {
 
@@ -11,7 +12,7 @@ class Posts extends Component {
     super();
 
     this.state = {
-      posts: posts,
+      posts: [],
       selectedCategory: categoryAll
     };
 
@@ -22,13 +23,63 @@ class Posts extends Component {
   //   this.setState({ selectedCategory: category });
   // }
 
+  componentDidMount() {
+    const posts = postService.getAll();
+    this.setState({ posts });
+  }
+
+  handlePostDelete = (id) => {
+    if (window.confirm('Are you sure?')) {
+      postService.delete(id);
+
+      // Option #1
+      // const posts = postService.getAll();
+      // this.setState({ posts });
+
+      // Option #2
+      this.setState((prevState) => {
+        const updatedPosts = prevState.posts.filter(p => p.id !== id);
+        return {
+          posts: updatedPosts
+        };
+      });
+    }
+  }
+
   handleCategorySelect = (category) => {
     this.setState({ selectedCategory: category });
   }
 
-  render() {
-    console.log('render() invoked..');
+  renderPosts(posts) {
+    return <table className="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Title</th>
+          <th scope="col">Author</th>
+          <th scope="col">Category</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {posts.map(p =>
+          <tr key={p.id}>
+            <td>{p.title}</td>
+            <td>{p.author}</td>
+            <td>{p.category}</td>
+            <td>
+              <div className="btn-group btn-group-sm">
+                <Link className="btn btn-info" to={`/posts/${p.id}`} >View</Link>
+                <a className="btn btn-warning" href="/">Edit</a>
+                <button className="btn btn-danger" onClick={() => this.handlePostDelete(p.id)}>Delete</button>
+              </div>
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>;
+  }
 
+  render() {
     const posts = this.state.posts;
     const selectedCategory = this.state.selectedCategory;
 
@@ -45,7 +96,7 @@ class Posts extends Component {
         <h3>Posts</h3>
         <div>Selected Category: {selectedCategory.name}</div>
         {filteredPosts.length > 0
-          ? filteredPosts.map(p => <PostDetail key={p.id} post={p} />)
+          ? this.renderPosts(filteredPosts)
           : <div className="alert alert-info">No posts for the selected category.</div>
         }
       </div>
