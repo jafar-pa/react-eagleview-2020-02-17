@@ -1,38 +1,27 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { connect } from 'react-redux';
 
 import { categoryAll } from '../constants';
-import categoryService from '../services/CategoryService';
 
-class Categories extends Component {
-  state = {
-    categories: []
-  }
+const Categories = props => {
+  const categoriesWithAll = [categoryAll, ...props.categories];
 
-  async componentDidMount() {
-    try {
-      const categories = await categoryService.getAll();
+  return <div>
+    <h3>Categories</h3>
 
-      this.setState({ categories });
-    } catch (error) {
-      console.log('Get categories failed.');
-      console.log('Error:', error);
-    }
-  }
+    <div className="list-group">
+      {categoriesWithAll.map(c => <button onClick={() => props.onCategorySelect(c)}
+        key={c.id} type="button" className="list-group-item list-group-item-action">
+        {c.name}
+      </button>)}
+    </div>
+  </div>;
+};
 
-  render() {
-    const categoriesWithAll = [categoryAll, ...this.state.categories];
+const mapStateToProps = state => {
+  return {
+    categories: state.categories
+  };
+};
 
-    return <div>
-      <h3>Categories</h3>
-
-      <div className="list-group">
-        {categoriesWithAll.map(c => <button onClick={() => this.props.onCategorySelect(c)}
-          key={c.id} type="button" className="list-group-item list-group-item-action">
-          {c.name}
-        </button>)}
-      </div>
-    </div>;
-  }
-}
-
-export default Categories;
+export default connect(mapStateToProps, null)(Categories);
