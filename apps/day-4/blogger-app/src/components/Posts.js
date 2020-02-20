@@ -69,7 +69,7 @@ class Posts extends Component {
             <td>
               <div className="btn-group btn-group-sm">
                 <Link className="btn btn-info" to={`/posts/${p.id}`} >View</Link>
-                <a className="btn btn-warning" href="/">Edit</a>
+                <Link className="btn btn-warning" to={`/posts/${p.id}/edit`}>Edit</Link>
                 <button className="btn btn-danger" onClick={() => this.handlePostDelete(p.id)}>Delete</button>
               </div>
             </td>

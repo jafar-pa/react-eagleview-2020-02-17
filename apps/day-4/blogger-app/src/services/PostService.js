@@ -10,12 +10,23 @@ class PostService {
     return post;
   }
 
-  create(newPost) {
-    posts.push(newPost);
+  create(post) {
+    post.id = Date.now();
+    posts.push(post);
+    return post;
   }
 
   update(post) {
-    // code to update post
+    const postToUpdate = posts.find(p => p.id === post.id);
+
+    if (postToUpdate) {
+      postToUpdate.title = post.title;
+      postToUpdate.body = post.body;
+      postToUpdate.author = post.author;
+      postToUpdate.category = post.category;
+    }
+
+    return postToUpdate;
   }
 
   delete(id) {

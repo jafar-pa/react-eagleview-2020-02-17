@@ -1,16 +1,28 @@
 import React, { Component } from 'react';
 
 import categoryService from '../services/CategoryService';
-import postService from '../services/PostService';
 
 class PostForm extends Component {
   state = {
+    id: 0,
     title: '',
     body: '',
     author: '',
     category: '',
 
+    initialized: false,
     categories: []
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    if (props.operation === 'Update' && props.post && !state.initialized) {
+      return {
+        ...props.post,
+        initialized: true
+      };
+    }
+
+    return null;
   }
 
   componentDidMount() {
@@ -18,42 +30,37 @@ class PostForm extends Component {
     this.setState({ categories });
   }
 
+  handleSubmit = e => {
+    e.preventDefault();
+
+    const { id, title, body, author, category } = this.state;
+    this.props.onSubmit({
+      id,
+      title,
+      body,
+      author,
+      category
+    });
+  }
+
   handleChange = e => {
     const { name, value } = e.target;
     this.setState({ [name]: value });
   }
 
-  handleFormSubmit = (e) => {
-    e.preventDefault();
-
-    const { title, body, author, category } = this.state;
-
-    const post = {
-      title,
-      body,
-      author,
-      category,
-      id: Date.now()
-    };
-
-    postService.create(post);
-    this.props.history.push('/posts');
-  }
-
   render() {
-    // destructuring assignment
+    const { operation } = this.props;
     const { title, body, author, category, categories } = this.state;
 
     return <div>
-      <h3>Post Form</h3>
+      <h4 className="mr-3">{operation} Post</h4>
 
       <div className="card bg-light">
         <div className="card-body">
-          <form onSubmit={this.handleFormSubmit}>
+          <form onSubmit={this.handleSubmit}>
             <div className="form-group">
               <label htmlFor="title">Title</label>
               <input
-                required
                 type="text"
                 className="form-control"
                 id="title"
@@ -66,7 +73,6 @@ class PostForm extends Component {
             <div className="form-group">
               <label htmlFor="body">Body</label>
               <textarea
-                required
                 className="form-control"
                 id="body"
                 name="body"
@@ -81,7 +87,6 @@ class PostForm extends Component {
             <div className="form-group">
               <label htmlFor="author">Author</label>
               <input
-                required
                 type="text"
                 className="form-control"
                 id="author"
@@ -101,8 +106,10 @@ class PostForm extends Component {
                 value={category}
                 onChange={this.handleChange}
               >
-                <option value="">-Select-</option>
-                {categories.map(c => <option key={c.id} value={c.id}> {c.name} </option>)}
+                <option value="">--Select--</option>
+                {categories.map(c => <option
+                  key={c.id} value={c.id}>{c.name}</option>
+                )}
               </select>
             </div>
 

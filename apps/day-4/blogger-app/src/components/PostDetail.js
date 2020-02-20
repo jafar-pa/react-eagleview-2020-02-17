@@ -48,6 +48,7 @@ class PostDetail extends Component {
         <button
           className="btn btn-sm btn-outline-primary mr-1"
           type="button"
+          onClick={() => this.props.history.push(`/posts/${post.id}/edit`)}
         >Edit</button>
         <button
           className="btn btn-sm btn-outline-danger mr-1"
