@@ -12,7 +12,7 @@ const getUser = (name) => {
       }
     }, 5000);
   });
-};
+}
 
 const getPosts = (userId) => {
   return new Promise((resolve, reject) => {
@@ -28,25 +28,21 @@ const getPosts = (userId) => {
       }
     }, 5000);
   });
-};
-
-const doWork = async () => {
-  try {
-    const user = await getUser('ram');
-    console.log('user:', user);
-
-    const postsForUser = await getPosts(user.id);
-    console.log('posts for user:', postsForUser);
-  } catch (error) {
-    console.log('error:', error);
-  }
-};
-
-// async function doWork() {}
+}
 
 console.log('begin');
 
-doWork();
+getUser('ram')
+  .then((user) => {
+    console.log('user:', user);
+    return getPosts(user.id);
+  })
+  .then((postsForUser) => {
+    console.log('posts for user:', postsForUser);
+  })
+  .catch((error) => {
+    console.log('error:', error);
+  });
 
 console.log('perform some other operation');
 

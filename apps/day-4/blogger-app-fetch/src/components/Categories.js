@@ -8,9 +8,15 @@ class Categories extends Component {
     categories: []
   }
 
-  componentDidMount() {
-    const categories = categoryService.getAll();
-    this.setState({ categories });
+  async componentDidMount() {
+    try {
+      const categories = await categoryService.getAll();
+
+      this.setState({ categories });
+    } catch (error) {
+      console.log('Get categories failed.');
+      console.log('Error:', error);
+    }
   }
 
   render() {

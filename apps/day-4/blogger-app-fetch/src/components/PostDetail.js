@@ -7,17 +7,28 @@ class PostDetail extends Component {
     post: null
   }
 
-  componentDidMount() {
-    const id = parseInt(this.props.match.params.id);
-    const post = postService.get(id);
-    this.setState({ post });
+  async componentDidMount() {
+    try {
+      const id = this.props.match.params.id;
+      const post = await postService.get(id);
+      this.setState({ post });
+    } catch (error) {
+      console.log('Get post failed.');
+      console.log('Error:', error);
+    }
   }
 
-  handleDeleteClick = () => {
-    if (window.confirm('Are you sure?')) {
-      postService.delete(this.state.post.id);
-      this.props.history.push('/posts');
+  handleDeleteClick = async () => {
+    try {
+      if (window.confirm('Are you sure?')) {
+        await postService.delete(this.state.post.id);
+        this.props.history.push('/posts');
+      }
+    } catch (error) {
+      console.log('Delete post failed.');
+      console.log('Error:', error);
     }
+
   }
 
   render() {

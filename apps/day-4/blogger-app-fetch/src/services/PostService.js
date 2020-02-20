@@ -1,42 +1,46 @@
-import { posts } from '../data/store';
+import { apiBaseUrl } from '../constants';
 
 class PostService {
+  apiUrlPosts = `${apiBaseUrl}/posts`;
+
   getAll() {
-    return posts;
+    return fetch(this.apiUrlPosts)
+      .then(response => response.json());
   }
 
   get(id) {
-    const post = posts.find(p => p.id === id);
-    return post;
+    return fetch(`${this.apiUrlPosts}/${id}`)
+      .then(response => response.json());
   }
 
   create(post) {
-    post.id = Date.now();
-    posts.push(post);
-    return post;
+    return fetch(this.apiUrlPosts, {
+      method: 'POST',
+      body: JSON.stringify(post),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => response.json());
   }
 
   update(post) {
-    const postToUpdate = posts.find(p => p.id === post.id);
-
-    if (postToUpdate) {
-      postToUpdate.title = post.title;
-      postToUpdate.body = post.body;
-      postToUpdate.author = post.author;
-      postToUpdate.category = post.category;
-    }
-
-    return postToUpdate;
+    return fetch(`${this.apiUrlPosts}/${post.id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(post),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => response.json());
   }
 
   delete(id) {
-    const index = posts.findIndex(p => p.id === id);
-
-    if (index >= 0) {
-      posts.splice(index, 1);
-    }
+    return fetch(`${this.apiUrlPosts}/${id}`, {
+      method: 'DELETE'
+    })
+      .then(response => response.json());
   }
 }
 
-const serviceInstance = new PostService();
-export default serviceInstance;
+export default new PostService();

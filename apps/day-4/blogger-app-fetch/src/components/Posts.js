@@ -15,34 +15,33 @@ class Posts extends Component {
       posts: [],
       selectedCategory: categoryAll
     };
-
-    // this.handleCategorySelect = this.handleCategorySelect.bind(this);
   }
 
-  // handleCategorySelect(category) {
-  //   this.setState({ selectedCategory: category });
-  // }
-
-  componentDidMount() {
-    const posts = postService.getAll();
-    this.setState({ posts });
+  async componentDidMount() {
+    try {
+      const posts = await postService.getAll();
+      this.setState({ posts });
+    } catch (error) {
+      console.log('Get posts failed.');
+      console.log('Error:', error);
+    }
   }
 
-  handlePostDelete = (id) => {
-    if (window.confirm('Are you sure?')) {
-      postService.delete(id);
+  handlePostDelete = async (id) => {
+    try {
+      if (window.confirm('Are you sure?')) {
+        await postService.delete(id);
 
-      // Option #1
-      // const posts = postService.getAll();
-      // this.setState({ posts });
-
-      // Option #2
-      this.setState((prevState) => {
-        const updatedPosts = prevState.posts.filter(p => p.id !== id);
-        return {
-          posts: updatedPosts
-        };
-      });
+        this.setState((prevState) => {
+          const updatedPosts = prevState.posts.filter(p => p.id !== id);
+          return {
+            posts: updatedPosts
+          };
+        });
+      }
+    } catch (error) {
+      console.log('Delete post failed.');
+      console.log('Error:', error);
     }
   }
 
