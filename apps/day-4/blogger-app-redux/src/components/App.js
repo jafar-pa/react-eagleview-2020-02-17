@@ -8,7 +8,7 @@ import Posts from './Posts';
 import PostDetail from './PostDetail';
 import PostFormCreate from './PostFormCreate';
 import PostFormUpdate from './PostFormUpdate';
-import { beginGetCategories } from '../actions/categories';
+import { getCategories } from '../actions/categories';
 
 class App extends Component {
   componentDidMount() {
@@ -30,12 +30,11 @@ class App extends Component {
       </div>
     );
   }
-
 }
 
 const mapDispatchToProps = dispatch => {
   return {
-    getCategories: () => dispatch(beginGetCategories())
+    getCategories: () => dispatch(getCategories())
   }
 };
 

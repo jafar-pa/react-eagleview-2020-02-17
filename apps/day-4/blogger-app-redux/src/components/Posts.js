@@ -1,55 +1,25 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 
+import { getCategoryName } from '../util';
 import Categories from './Categories';
-
-import { categoryAll } from '../constants';
-import postService from '../services/PostService';
+import { getPosts, deletePost } from '../actions/posts';
 
 class Posts extends Component {
-
-  constructor() {
-    super();
-
-    this.state = {
-      posts: [],
-      selectedCategory: categoryAll
-    };
-  }
-
   async componentDidMount() {
-    try {
-      const posts = await postService.getAll();
-      this.setState({ posts });
-    } catch (error) {
-      console.log('Get posts failed.');
-      console.log('Error:', error);
-    }
+    this.props.getPosts();
   }
 
   handlePostDelete = async (id) => {
-    try {
-      if (window.confirm('Are you sure?')) {
-        await postService.delete(id);
-
-        this.setState((prevState) => {
-          const updatedPosts = prevState.posts.filter(p => p.id !== id);
-          return {
-            posts: updatedPosts
-          };
-        });
-      }
-    } catch (error) {
-      console.log('Delete post failed.');
-      console.log('Error:', error);
+    if (window.confirm('Are you sure?')) {
+      this.props.deletePost(id);
     }
   }
 
-  handleCategorySelect = (category) => {
-    this.setState({ selectedCategory: category });
-  }
-
   renderPosts(posts) {
+    const { categories } = this.props;
+
     return <table className="table table-bordered table-hover">
       <thead>
         <tr>
@@ -64,7 +34,7 @@ class Posts extends Component {
           <tr key={p.id}>
             <td>{p.title}</td>
             <td>{p.author}</td>
-            <td>{p.category}</td>
+            <td>{getCategoryName(categories, p.category)}</td>
             <td>
               <div className="btn-group btn-group-sm">
                 <Link className="btn btn-info" to={`/posts/${p.id}`} >View</Link>
@@ -79,8 +49,7 @@ class Posts extends Component {
   }
 
   render() {
-    const posts = this.state.posts;
-    const selectedCategory = this.state.selectedCategory;
+    const { posts, selectedCategory } = this.props;
 
     const filteredPosts = selectedCategory.id === 'all'
       ? posts
@@ -88,7 +57,7 @@ class Posts extends Component {
 
     return <div className="row">
       <div className="col-3">
-        <Categories onCategorySelect={this.handleCategorySelect} />
+        <Categories />
       </div>
 
       <div className="col">
@@ -101,7 +70,17 @@ class Posts extends Component {
       </div>
     </div>;
   }
-
 }
 
-export default Posts;
+const mapStateToProps = ({ posts, categories, selectedCategory }) => ({
+  posts,
+  categories,
+  selectedCategory
+});
+
+const mapDispatchToProps = dispatch => ({
+  getPosts: () => dispatch(getPosts()),
+  deletePost: id => dispatch(deletePost(id))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Posts);

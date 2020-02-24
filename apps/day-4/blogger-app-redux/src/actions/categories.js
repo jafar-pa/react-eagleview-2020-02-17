@@ -1,11 +1,11 @@
-import { CategoryActions } from '../constants';
+import { CategoryActionTypes } from '../constants';
 import categoryService from '../services/CategoryService';
 
-export const beginGetCategories = () => {
+export const getCategories = () => {
   return dispatch => {
     return categoryService.getAll()
       .then(categories => {
-        dispatch(endGetCategories(categories));
+        dispatch(setCategories(categories));
       })
       .catch((error) => {
         console.log('Error:', error);
@@ -13,9 +13,16 @@ export const beginGetCategories = () => {
   };
 }
 
-export const endGetCategories = categories => {
+export const setCategories = categories => {
   return {
-    type: CategoryActions.GET_CATEGORIES_END,
+    type: CategoryActionTypes.SET_CATEGORIES,
     payload: categories
   };
 };
+
+export const selectCategory = category => {
+  return {
+    type: CategoryActionTypes.SELECT_CATEGORY,
+    payload: category
+  };
+}

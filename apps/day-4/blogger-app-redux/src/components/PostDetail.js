@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
+import { getCategoryName } from '../util';
 import postService from '../services/PostService';
+import { deletePost } from '../actions/posts';
 
 class PostDetail extends Component {
   state = {
@@ -19,20 +22,16 @@ class PostDetail extends Component {
   }
 
   handleDeleteClick = async () => {
-    try {
-      if (window.confirm('Are you sure?')) {
-        await postService.delete(this.state.post.id);
-        this.props.history.push('/posts');
-      }
-    } catch (error) {
-      console.log('Delete post failed.');
-      console.log('Error:', error);
+    if (window.confirm('Are you sure?')) {
+      const id = this.props.match.params.id;
+      await this.props.deletePost(id);
+      this.props.history.push('/posts');
     }
-
   }
 
   render() {
     const post = this.state.post;
+    const { categories } = this.props;
 
     if (!post) {
       return <div>Loading post. Please wait...</div>;
@@ -52,7 +51,7 @@ class PostDetail extends Component {
           {post.author}
         </em></p>
         <p className="card-text">Category: <em>
-          {post.category}
+          {getCategoryName(categories, post.category)}
         </em></p>
       </div>
       <div className="card-footer">
@@ -76,4 +75,10 @@ class PostDetail extends Component {
   }
 }
 
-export default PostDetail;
+const mapStateToProps = ({ categories }) => ({ categories });
+
+const mapDispatchToProps = dispatch => ({
+  deletePost: id => dispatch(deletePost(id))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(PostDetail);

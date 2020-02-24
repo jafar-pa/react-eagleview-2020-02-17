@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import categoryService from '../services/CategoryService';
-
 class PostForm extends Component {
   state = {
     id: 0,
@@ -12,7 +10,6 @@ class PostForm extends Component {
     category: '',
 
     initialized: false,
-    // categories: []
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -25,16 +22,6 @@ class PostForm extends Component {
 
     return null;
   }
-
-  // async componentDidMount() {
-  //   try {
-  //     const categories = await categoryService.getAll();
-  //     this.setState({ categories });
-  //   } catch (error) {
-  //     console.log('Get categories failed.');
-  //     console.log('Error:', error);
-  //   }
-  // }
 
   handleSubmit = e => {
     e.preventDefault();
