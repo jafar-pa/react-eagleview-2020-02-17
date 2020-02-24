@@ -11,14 +11,14 @@
       "id": 2,
       "title": "Redux Principles",
       "body": "Redux can be described in three fundamental principles: (a) Single source of truth (b) State is read-only (c) Changes are made with pure functions",
-      "author": "facebook",
+      "author": "Krish",
       "category": "redux"
     },
     {
       "id": 3,
       "title": "Angular",
       "body": "One framework. Mobile & desktop.",
-      "author": "google",
+      "author": "Hari",
       "category": "angular"
     }
   ],

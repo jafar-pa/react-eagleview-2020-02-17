@@ -5,6 +5,14 @@ const postsReducer = (state = [], action) => {
     case PostActionTypes.SET_POSTS:
       return [...action.payload];
 
+    case PostActionTypes.SET_POST:
+      const payload = action.payload;
+      const post = state.find(p => p.id === payload.id);
+      let newState = post
+        ? state.map(p => p.id === payload.id ? payload : { ...p })
+        : [...state, payload];
+      return newState;
+
     case PostActionTypes.SET_CREATED_POST:
       return [...state, action.payload];
 

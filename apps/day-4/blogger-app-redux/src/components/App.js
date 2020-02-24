@@ -32,10 +32,8 @@ class App extends Component {
   }
 }
 
-const mapDispatchToProps = dispatch => {
-  return {
-    getCategories: () => dispatch(getCategories())
-  }
-};
+const mapDispatchToProps = dispatch => ({
+  getCategories: () => dispatch(getCategories())
+});
 
 export default connect(null, mapDispatchToProps)(App);

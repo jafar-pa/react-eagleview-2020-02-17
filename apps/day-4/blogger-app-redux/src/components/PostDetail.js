@@ -2,36 +2,27 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { getCategoryName } from '../util';
-import postService from '../services/PostService';
-import { deletePost } from '../actions/posts';
+import { deletePost, getPost } from '../actions/posts';
 
 class PostDetail extends Component {
-  state = {
-    post: null
+  get id() {
+    return parseInt(this.props.match.params.id);
   }
 
   async componentDidMount() {
-    try {
-      const id = this.props.match.params.id;
-      const post = await postService.get(id);
-      this.setState({ post });
-    } catch (error) {
-      console.log('Get post failed.');
-      console.log('Error:', error);
-    }
+    this.props.getPost(this.id);
   }
 
   handleDeleteClick = async () => {
     if (window.confirm('Are you sure?')) {
-      const id = this.props.match.params.id;
-      await this.props.deletePost(id);
+      await this.props.deletePost(this.id);
       this.props.history.push('/posts');
     }
   }
 
   render() {
-    const post = this.state.post;
-    const { categories } = this.props;
+    const { categories, posts } = this.props;
+    const post = posts.find(p => p.id === this.id);
 
     if (!post) {
       return <div>Loading post. Please wait...</div>;
@@ -75,10 +66,11 @@ class PostDetail extends Component {
   }
 }
 
-const mapStateToProps = ({ categories }) => ({ categories });
+const mapStateToProps = ({ posts, categories }) => ({ posts, categories });
 
 const mapDispatchToProps = dispatch => ({
+  getPost: id => dispatch(getPost(id)),
   deletePost: id => dispatch(deletePost(id))
-})
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(PostDetail);

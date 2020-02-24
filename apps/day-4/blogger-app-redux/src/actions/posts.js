@@ -20,6 +20,25 @@ const setPosts = posts => {
   };
 };
 
+export const getPost = id => {
+  return async dispatch => {
+    try {
+      const post = await postService.get(id);
+      dispatch(setPost(post));
+    } catch (e) {
+      console.log('Get post failed.');
+      console.log('Error:', e);
+    }
+  };
+};
+
+const setPost = post => {
+  return {
+    type: PostActionTypes.SET_POST,
+    payload: post
+  };
+};
+
 export const createPost = post => {
   return async dispatch => {
     try {
@@ -39,6 +58,25 @@ const setCreatedPost = post => {
   };
 };
 
+export const updatePost = post => {
+  return async dispatch => {
+    try {
+      const updatedPost = await postService.update(post);
+      dispatch(setUpdatedPost(updatedPost));
+    } catch (e) {
+      console.log('Updated post failed.');
+      console.log('Error:', e);
+    }
+  };
+};
+
+const setUpdatedPost = post => {
+  return {
+    type: PostActionTypes.SET_UPDATED_POST,
+    payload: post
+  };
+};
+
 export const deletePost = id => {
   return async dispatch => {
     try {
@@ -54,6 +92,6 @@ export const deletePost = id => {
 const removeDeletedPost = id => {
   return {
     type: PostActionTypes.REMOVE_DELETED_POST,
-    payload: parseInt(id)
+    payload: id
   };
 };

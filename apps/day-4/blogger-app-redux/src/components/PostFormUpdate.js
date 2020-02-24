@@ -1,41 +1,39 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import PostForm from './PostForm';
-import postService from '../services/PostService';
+import { getPost, updatePost } from '../actions/posts';
 
 class PostFormUpdate extends Component {
-  state = {
-    post: null
+  get id() {
+    return parseInt(this.props.match.params.id);
   }
 
-  async componentDidMount() {
-    try {
-      const id = this.props.match.params.id;
-      const post = await postService.get(id);
-      this.setState({ post });
-    } catch (error) {
-      console.log('Get post failed.');
-      console.log('Error:', error);
-    }
+  componentDidMount() {
+    this.props.getPost(this.id);
   }
 
   handleSubmit = async post => {
-    try {
-      await postService.update(post);
-      this.props.history.push('/posts');
-    } catch (error) {
-      console.log('Update post failed.');
-      console.log('Error:', error);
-    }
+    await this.props.updatePost(post);
+    this.props.history.push('/posts');
   }
 
   render() {
+    const post = this.props.posts.find(p => p.id === this.id);
+
     return <PostForm
       operation="Update"
-      post={this.state.post}
+      post={post}
       onSubmit={this.handleSubmit}
     />;
   }
 }
 
-export default PostFormUpdate;
+const mapStateToProps = ({ posts }) => ({ posts });
+
+const mapDispatchToProps = dispatch => ({
+  getPost: id => dispatch(getPost(id)),
+  updatePost: post => dispatch(updatePost(post))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(PostFormUpdate);
